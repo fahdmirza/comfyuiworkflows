@@ -1,0 +1,130 @@
+
+## Ubuntu/Linux
+
+### Method 1: Re-run Installer (Recommended)
+```bash
+curl -fsSL https://openclaw.bot/install.sh | bash
+openclaw doctor
+openclaw gateway restart
+openclaw status
+```
+
+### Method 2: Direct npm Update
+```bash
+npm install -g openclaw@latest
+openclaw doctor
+openclaw gateway restart
+```
+
+### Method 3: Using openclaw update command
+```bash
+openclaw update
+
+## Windows (WSL2)
+
+OpenClaw on Windows requires WSL2. Update process is identical to Linux:
+```bash
+curl -fsSL https://openclaw.bot/install.sh | bash
+openclaw doctor
+systemctl --user restart openclaw-gateway
+```
+
+Or using npm:
+```bash
+npm install -g openclaw@latest
+openclaw doctor
+systemctl --user restart openclaw-gateway
+```
+
+
+## macOS (Global Install)
+
+### Using Installer
+```bash
+curl -fsSL https://openclaw.bot/install.sh | bash
+openclaw doctor
+openclaw gateway restart
+```
+
+### Using npm
+```bash
+npm install -g openclaw@latest
+openclaw doctor
+openclaw gateway restart
+```
+
+### Using pnpm
+```bash
+pnpm add -g openclaw@latest
+openclaw doctor
+openclaw gateway restart
+```
+
+## macOS (Global Install)
+
+### Using Installer
+```bash
+curl -fsSL https://openclaw.bot/install.sh | bash
+openclaw doctor
+openclaw gateway restart
+```
+
+### Using npm
+```bash
+npm install -g openclaw@latest
+openclaw doctor
+openclaw gateway restart
+```
+
+### Using pnpm
+```bash
+pnpm add -g openclaw@latest
+openclaw doctor
+openclaw gateway restart
+```
+
+## Switching Update Channels
+
+OpenClaw has three channels:
+- **stable**: Tagged releases (recommended)
+- **beta**: Prerelease versions with new features
+- **dev**: Latest development branch
+
+### Switch to beta
+```bash
+openclaw update --channel beta
+```
+
+### Switch to dev
+```bash
+openclaw update --channel dev
+```
+
+### Switch back to stable
+```bash
+openclaw update --channel stable
+```
+
+
+
+
+## Rolling Back to Previous Version
+
+If an update breaks something:
+
+### For npm/pnpm installs
+```bash
+npm install -g openclaw@2026.1.29  # Replace with known-good version
+openclaw doctor
+openclaw gateway restart
+```
+
+### For source installs
+```bash
+cd ~/openclaw
+git fetch origin
+git checkout "$(git rev-list -n 1 --before=\"2026-01-29\" origin/main)"
+pnpm install
+pnpm build
+openclaw gateway restart
+```

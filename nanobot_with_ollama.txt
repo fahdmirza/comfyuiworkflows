@@ -1,0 +1,20 @@
+{
+  "providers": {
+    "openai": {
+      "apiKey": "dummy",
+      "apiBase": "http://localhost:11434/v1"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": "glm-4.7-flash:latest"
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "token": "YOUR_BOT_TOKEN_HERE",
+      "allowFrom": ["YOUR_NUMERIC_USER_ID_HERE"]
+    }
+  }
+}

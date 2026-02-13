@@ -1,0 +1,64 @@
+
+Commands:
+
+wget https://go.dev/dl/go1.23.5.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.23.5.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# Clone and build
+git clone https://github.com/sipeed/picoclaw.git
+cd picoclaw
+make deps
+make build
+make install
+
+# Initialize
+picoclaw onboard
+
+# Test agent
+picoclaw agent -m "Hello, introduce yourself briefly"
+
+# Start gateway
+picoclaw gateway
+
+
+config.json file:
+
+{
+  "agents": {
+    "defaults": {
+      "workspace": "~/.picoclaw/workspace",
+      "model": "glm-4.7-flash:latest",
+      "max_tokens": 8192,
+      "temperature": 0.7,
+      "max_tool_iterations": 20
+    }
+  },
+  "providers": {
+    "openrouter": {
+      "api_key": "dummy",
+      "api_base": "http://localhost:11434/v1"
+    }
+  },
+  "tools": {
+    "web": {
+      "duckduckgo": {
+        "enabled": true,
+        "max_results": 5
+      }
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "token": "8542124368:AAE47s5ViuqtbFtp1jgn4dWLMJEBEHXSRtA",
+      "allowFrom": ["6961858793"]
+    }
+  },
+  "heartbeat": {
+    "enabled": true,
+    "interval": 30
+  }
+}

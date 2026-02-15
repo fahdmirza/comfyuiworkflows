@@ -1,0 +1,107 @@
+workspace_dir = "/home/Ubuntu/.zeroclaw/workspace"
+config_path = "/home/Ubuntu/.zeroclaw/config.toml"
+api_key = "http://localhost:11434"
+default_provider = "ollama"
+default_model = "glm-4.7-flash:latest"
+default_temperature = 0.7
+
+[observability]
+backend = "none"
+
+[autonomy]
+level = "supervised"
+workspace_only = true
+allowed_commands = [
+    "git",
+    "npm",
+    "cargo",
+    "ls",
+    "cat",
+    "grep",
+    "find",
+    "echo",
+    "pwd",
+    "wc",
+    "head",
+    "tail",
+]
+forbidden_paths = [
+    "/etc",
+    "/root",
+    "/home",
+    "/usr",
+    "/bin",
+    "/sbin",
+    "/lib",
+    "/opt",
+    "/boot",
+    "/dev",
+    "/proc",
+    "/sys",
+    "/var",
+    "/tmp",
+    "~/.ssh",
+    "~/.gnupg",
+    "~/.aws",
+    "~/.config",
+]
+max_actions_per_hour = 20
+max_cost_per_day_cents = 500
+
+[runtime]
+kind = "native"
+
+[reliability]
+provider_retries = 2
+provider_backoff_ms = 500
+fallback_providers = []
+channel_initial_backoff_secs = 2
+channel_max_backoff_secs = 60
+scheduler_poll_secs = 15
+scheduler_retries = 2
+
+[heartbeat]
+enabled = false
+interval_minutes = 30
+
+[channels_config]
+cli = true
+
+[memory]
+backend = "sqlite"
+auto_save = true
+hygiene_enabled = true
+archive_after_days = 7
+purge_after_days = 30
+conversation_retention_days = 30
+embedding_provider = "none"
+embedding_model = "text-embedding-3-small"
+embedding_dimensions = 1536
+vector_weight = 0.7
+keyword_weight = 0.3
+embedding_cache_size = 10000
+chunk_max_tokens = 512
+
+[tunnel]
+provider = "none"
+
+[gateway]
+port = 3000
+host = "127.0.0.1"
+require_pairing = true
+allow_public_bind = false
+paired_tokens = []
+
+[composio]
+enabled = false
+entity_id = "default"
+
+[secrets]
+encrypt = true
+
+[browser]
+enabled = false
+allowed_domains = []
+
+[identity]
+format = "openclaw"

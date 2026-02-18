@@ -1,0 +1,144 @@
+# Install SQLite
+sudo apt update
+sudo apt install sqlite3 -y
+
+# Create database directory
+mkdir -p ~/databases
+cd ~/databases
+
+# Create and populate the database
+sqlite3 sales.db << 'EOF'
+CREATE TABLE products (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT,
+    price REAL
+);
+
+CREATE TABLE sales (
+    id INTEGER PRIMARY KEY,
+    product_id INTEGER,
+    quantity INTEGER,
+    sale_date TEXT,
+    revenue REAL,
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+INSERT INTO products (name, category, price) VALUES
+('MacBook Pro M4', 'Laptops', 2499.00),
+('iPhone 16 Pro', 'Phones', 1199.00),
+('AirPods Pro 3', 'Audio', 249.00),
+('iPad Air', 'Tablets', 599.00),
+('Apple Watch Ultra', 'Wearables', 799.00),
+('Magic Keyboard', 'Accessories', 349.00),
+('Studio Display', 'Monitors', 1599.00),
+('Mac Mini M4', 'Desktops', 599.00);
+
+INSERT INTO sales (product_id, quantity, sale_date, revenue) VALUES
+(1, 5, '2026-02-01', 12495.00),
+(2, 12, '2026-02-01', 14388.00),
+(3, 25, '2026-02-02', 6225.00),
+(1, 3, '2026-02-03', 7497.00),
+(4, 8, '2026-02-03', 4792.00),
+(5, 6, '2026-02-04', 4794.00),
+(2, 15, '2026-02-05', 17985.00),
+(3, 30, '2026-02-06', 7470.00),
+(6, 10, '2026-02-07', 3490.00),
+(7, 2, '2026-02-08', 3198.00),
+(8, 20, '2026-02-09', 11980.00);
+EOF
+
+# Verify database
+sqlite3 ~/databases/sales.db "SELECT COUNT(*) FROM products;"
+sqlite3 ~/databases/sales.db "SELECT COUNT(*) FROM sales;"
+
+# Cleanup and reinstall OpenClaw
+systemctl --user stop openclaw-gateway
+openclaw uninstall --all --yes
+npm uninstall -g openclaw
+rm -rf ~/.openclaw
+sed -i '/openclaw/d' ~/.bashrc
+source ~/.bashrc
+
+# Fresh install
+curl -fsSL https://openclaw.ai/install.sh | bash
+source ~/.bashrc
+
+# Create SQLite skill
+mkdir -p ~/.openclaw/workspace/skills/sqlite
+cat > ~/.openclaw/workspace/skills/sqlite/SKILL.md << 'EOF'
+---
+name: sqlite
+description: Query and analyze SQLite databases using SQL
+metadata: {"openclaw": {"requires": {"bins": ["sqlite3"]}, "emoji": "🗄️"}}
+---
+
+# SQLite Database Query Skill
+
+This skill allows you to query SQLite databases using SQL.
+
+## Usage
+
+To query a database, use the `exec` tool with sqlite3:
+```bash
+sqlite3 /path/to/database.db "SELECT * FROM table_name;"
+```
+
+## Common Commands
+
+- List tables: `sqlite3 database.db ".tables"`
+- Show schema: `sqlite3 database.db ".schema table_name"`
+- Run query: `sqlite3 database.db "SELECT * FROM products LIMIT 5;"`
+- Export CSV: `sqlite3 -csv database.db "SELECT * FROM sales;"`
+- Column mode: `sqlite3 -column -header database.db "SELECT * FROM products;"`
+
+## Example Queries
+
+Query products:
+```bash
+sqlite3 ~/databases/sales.db "SELECT * FROM products;"
+```
+
+Analyze sales:
+```bash
+sqlite3 ~/databases/sales.db "SELECT p.name, SUM(s.revenue) as total FROM sales s JOIN products p ON s.product_id = p.id GROUP BY p.name ORDER BY total DESC;"
+```
+EOF
+
+# Create exec-approvals.json
+cat > ~/.openclaw/exec-approvals.json << 'EOF'
+{
+  "version": 1,
+  "defaults": {
+    "security": "allow",
+    "ask": "off"
+  },
+  "agents": {
+    "main": {
+      "security": "allow",
+      "ask": "off",
+      "autoAllowSkills": true
+    }
+  }
+}
+EOF
+
+# Restart gateway
+systemctl --user restart openclaw-gateway
+
+# Verify setup
+openclaw skills list
+openclaw models status
+
+# Open dashboard
+openclaw dashboard
+```
+
+**Then in the web UI, send:**
+```
+Show me all products and total revenue per product from ~/databases/sales.db
+```
+
+**Then:**
+```
+Create an HTML page that displays this sales data in an interactive dashboard with charts, then deploy it to Vercel

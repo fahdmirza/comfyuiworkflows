@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawRouter — Installation Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05080e;
+    --surface: #0c1018;
+    --surface2: #131820;
+    --border: #1c2535;
+    --accent: #f59e0b;
+    --accent2: #10b981;
+    --blue: #3b82f6;
+    --text: #e8edf5;
+    --muted: #4e6070;
+    --code-bg: #080c14;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    min-height: 100vh;
+    padding: 48px 24px;
+    background-image:
+      radial-gradient(ellipse at 100% 0%, rgba(245,158,11,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 0% 100%, rgba(16,185,129,0.04) 0%, transparent 50%);
+  }
+
+  .page { max-width: 860px; margin: 0 auto; }
+
+  /* Hero */
+  .hero {
+    margin-bottom: 48px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  h1 .claw { color: var(--text); }
+  h1 .router { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .stat {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-val {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Section */
+  .section-title {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Steps */
+  .step { margin-bottom: 32px; }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(245,158,11,0.1);
+    border: 1.5px solid rgba(245,158,11,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .step-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+
+  .step-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-left: 46px;
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  /* Code */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-left: 46px;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.015);
+  }
+
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .code-dots { display: flex; gap: 6px; }
+  .code-dots span { width: 8px; height: 8px; border-radius: 50%; }
+
+  pre {
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: #cdd9e5;
+  }
+
+  .c-comment { color: #3d5166; }
+  .c-cmd { color: #10b981; }
+  .c-string { color: #f59e0b; }
+  .c-flag { color: #3b82f6; }
+  .c-key { color: #a78bfa; }
+  .c-num { color: #f97316; }
+
+  /* Routing table */
+  .routing-table {
+    margin-left: 46px;
+    margin-top: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .rt-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr;
+    background: var(--surface2);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rt-col {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .rt-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(28,37,53,0.5);
+    font-size: 13px;
+    align-items: center;
+  }
+
+  .rt-row:last-child { border-bottom: none; }
+  .rt-row:hover { background: rgba(255,255,255,0.015); }
+
+  .profile-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .savings { color: var(--accent2); font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; }
+  .model-name { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+
+  /* Wallet box */
+  .wallet-box {
+    margin-left: 46px;
+    margin-top: 14px;
+    background: rgba(245,158,11,0.06);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+
+  .wallet-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .wallet-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .wallet-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  .ws-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(245,158,11,0.15);
+    border: 1px solid rgba(245,158,11,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* vs box */
+  .vs-grid {
+    margin-left: 46px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .vs-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .vs-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: var(--muted); }
+  .vs-item { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: flex; gap: 8px; line-height: 1.4; }
+  .vs-item .check { color: var(--accent2); flex-shrink: 0; }
+  .vs-item .cross { color: #ef4444; flex-shrink: 0; }
+
+  /* Footer */
+  .footer {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-note { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">Installation Guide</div>
+    <h1><span class="claw">Claw</span><span class="router">Router</span> ⚡</h1>
+    <div class="hero-sub">The agent-native LLM router for OpenClaw<br>Route every request to the right model at the right price. 15-dimension scoring, &lt;1ms local routing.</div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-val">&lt;1ms</div>
+        <div class="stat-label">Local Routing</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">30+</div>
+        <div class="stat-label">Models</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">92%</div>
+        <div class="stat-label">Cost Savings</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">$2.05</div>
+        <div class="stat-label">Blended /M tokens</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">0</div>
+        <div class="stat-label">API Keys Needed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Steps -->
+  <div class="section-title">Installation Steps</div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-title">Install ClawRouter</div>
+    </div>
+    <div class="step-desc">One command installs ClawRouter and restarts your OpenClaw gateway with smart routing enabled.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-comment"># Install with smart routing enabled</span>
+<span class="c-cmd">curl</span> -fsSL https://blockrun.ai/ClawRouter-update | bash
+<span class="c-cmd">openclaw gateway restart</span>
+
+<span class="c-comment"># Smart routing (blockrun/auto) is now your default model</span>
+<span class="c-comment"># Your wallet address will be printed on install</span></pre>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-title">Fund Your Wallet</div>
+    </div>
+    <div class="step-desc">No account, no API key. Payment is authentication via x402 — non-custodial USDC on Base (L2).</div>
+    <div class="wallet-box">
+      <div class="wallet-title">💳 How the wallet works</div>
+      <div class="wallet-steps">
+        <div class="wallet-step"><div class="ws-num">1</div>Wallet auto-generated on Base L2 — saved at <code style="font-family:'JetBrains Mono',monospace;color:#f59e0b">~/.openclaw/blockrun/wallet.key</code></div>
+        <div class="wallet-step"><div class="ws-num">2</div>Fund with USDC on Base — $5 is enough for thousands of requests</div>
+        <div class="wallet-step"><div class="ws-num">3</div>Each request triggers a 402 response with price — your wallet signs and pays automatically</div>
+        <div class="wallet-step"><div class="ws-num">4</div>USDC stays in your wallet until spent — fully non-custodial, you hold your keys</div>
+      </div>
+    </div>
+    <div class="code-block" style="margin-top:12px">
+      <div class="code-header">
+        <div class="code-lang">bash · wallet commands</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre>/wallet     <span class="c-comment"># Check balance and address</span>
+/stats      <span class="c-comment"># View usage and savings</span></pre>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-title">Choose a Routing Profile</div>
+    </div>
+    <div class="step-desc">Switch profiles at any time with <code style="font-family:'JetBrains Mono',monospace;color:#f59e0b;font-size:13px">/model &lt;profile&gt;</code> in your chat.</div>
+    <div class="routing-table">
+      <div class="rt-header">
+        <div class="rt-col">Profile</div>
+        <div class="rt-col">Strategy</div>
+        <div class="rt-col">Savings</div>
+        <div class="rt-col">Best For</div>
+      </div>
+      <div class="rt-row">
+        <div><span class="profile-badge" style="background:rgba(59,130,246,0.15);color:#3b82f6">/model auto</span></div>
+        <div class="model-name">Balanced (default)</div>
+        <div class="savings">74–100%</div>
+        <div style="font-size:12px;color:var(--muted)">General use</div>
+      </div>
+      <div class="rt-row">
+        <div><span class="profile-badge" style="background:rgba(16,185,129,0.15);color:#10b981">/model eco</span></div>
+        <div class="model-name">Cheapest possible</div>
+        <div class="savings">95–100%</div>
+        <div style="font-size:12px;color:var(--muted)">Max savings</div>
+      </div>
+      <div class="rt-row">
+        <div><span class="profile-badge" style="background:rgba(245,158,11,0.15);color:#f59e0b">/model premium</span></div>
+        <div class="model-name">Best quality</div>
+        <div class="savings" style="color:var(--muted)">0%</div>
+        <div style="font-size:12px;color:var(--muted)">Mission-critical</div>
+      </div>
+      <div class="rt-row">
+        <div><span class="profile-badge" style="background:rgba(167,139,250,0.15);color:#a78bfa">/model free</span></div>
+        <div class="model-name">Free tier only</div>
+        <div class="savings">100%</div>
+        <div style="font-size:12px;color:var(--muted)">Zero cost</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div class="step-title">Model Shortcuts</div>
+    </div>
+    <div class="step-desc">Direct model shortcuts available alongside routing profiles.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash · in-chat commands</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre>/model grok        <span class="c-comment"># grok-4-fast</span>
+/model br-sonnet   <span class="c-comment"># claude-sonnet-4 via ClawRouter</span>
+/model gpt5        <span class="c-comment"># gpt-5.2-codex</span>
+/model o3          <span class="c-comment"># o3 reasoning model</span>
+/model auto        <span class="c-comment"># back to smart routing</span>
+/model free        <span class="c-comment"># gpt-oss-120b (FREE fallback)</span></pre>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div class="step-title">ClawRouter vs OpenRouter</div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-card">
+        <div class="vs-title" style="color:var(--muted)">OpenRouter / LiteLLM</div>
+        <div class="vs-item"><span class="cross">✗</span> Human creates account</div>
+        <div class="vs-item"><span class="cross">✗</span> API key (shared secret)</div>
+        <div class="vs-item"><span class="cross">✗</span> Prepaid balance (custodial)</div>
+        <div class="vs-item"><span class="cross">✗</span> Proprietary routing</div>
+        <div class="vs-item"><span class="cross">✗</span> Per-key rate limits</div>
+        <div class="vs-item"><span class="cross">✗</span> ~$25/M (Opus equivalent)</div>
+      </div>
+      <div class="vs-card" style="border-color:rgba(245,158,11,0.25)">
+        <div class="vs-title" style="color:var(--accent)">ClawRouter ⚡</div>
+        <div class="vs-item"><span class="check">✓</span> Agent generates wallet</div>
+        <div class="vs-item"><span class="check">✓</span> Wallet signature (cryptographic)</div>
+        <div class="vs-item"><span class="check">✓</span> Per-request (non-custodial)</div>
+        <div class="vs-item"><span class="check">✓</span> Open source, client-side</div>
+        <div class="vs-item"><span class="check">✓</span> No rate limits</div>
+        <div class="vs-item"><span class="check">✓</span> $2.05/M blended average</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-note">github.com/BlockRunAI/ClawRouter · blockrun.ai</div>
+    <div class="footer-note" style="color:var(--accent)">#ClawRouter #OpenClaw #LocalAI</div>
+  </div>
+
+</div>
+</body>
+</html>

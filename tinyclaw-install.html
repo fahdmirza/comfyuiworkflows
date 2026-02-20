@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TinyClaw — Installation Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Familjen+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1f2733;
+    --accent: #ec4899;
+    --accent2: #f97316;
+    --green: #22d3a0;
+    --text: #e8edf5;
+    --muted: #5a6a7e;
+    --code-bg: #0d1117;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Familjen Grotesk', sans-serif;
+    min-height: 100vh;
+    padding: 48px 24px;
+    background-image:
+      radial-gradient(ellipse at 80% 0%, rgba(236,72,153,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 0% 80%, rgba(249,115,22,0.04) 0%, transparent 50%);
+  }
+
+  .page { max-width: 860px; margin: 0 auto; }
+
+  /* Header */
+  .hero {
+    margin-bottom: 48px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(236,72,153,0.1);
+    border: 1px solid rgba(236,72,153,0.25);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  h1 .claw { color: var(--accent); }
+  h1 .tiny { color: var(--text); }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* Prereqs */
+  .prereq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .prereq-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .prereq-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .prereq-name { font-weight: 600; font-size: 14px; }
+  .prereq-note { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+  /* Steps */
+  .section-title {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .step {
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(236,72,153,0.1);
+    border: 1.5px solid rgba(236,72,153,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .step-title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .step-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-left: 46px;
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-left: 46px;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .code-dots span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  pre {
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: #cdd9e5;
+  }
+
+  .c-comment { color: #5a6a7e; }
+  .c-cmd { color: #22d3a0; }
+  .c-string { color: #f97316; }
+  .c-flag { color: #ec4899; }
+  .c-key { color: #a78bfa; }
+
+  /* Info box */
+  .info-box {
+    background: rgba(236,72,153,0.06);
+    border: 1px solid rgba(236,72,153,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-left: 46px;
+    margin-top: 12px;
+    font-size: 13.5px;
+    color: #c4b5fd;
+    line-height: 1.6;
+  }
+
+  .info-box strong { color: var(--accent); }
+
+  /* Providers note */
+  .provider-row {
+    display: flex;
+    gap: 12px;
+    margin-left: 46px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .provider-card {
+    flex: 1;
+    min-width: 200px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .provider-name {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .provider-detail {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+  }
+
+  /* Config block */
+  .config-note {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin-left: 46px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .config-note strong { color: var(--green); }
+
+  /* Footer */
+  .footer {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+  }
+
+  .footer-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .footer-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">Installation Guide</div>
+    <h1><span class="tiny">Tiny</span><span class="claw">Claw</span> 🦞</h1>
+    <div class="hero-sub">Multi-agent · Multi-team · Multi-channel · 24/7 AI assistant<br>Run multiple teams of AI agents that collaborate simultaneously with isolated workspaces.</div>
+    <div class="badges">
+      <div class="badge"><div class="dot" style="background:#ec4899"></div>Multi-Agent</div>
+      <div class="badge"><div class="dot" style="background:#22d3a0"></div>TypeScript</div>
+      <div class="badge"><div class="dot" style="background:#f97316"></div>Node.js v18+</div>
+      <div class="badge"><div class="dot" style="background:#a78bfa"></div>Telegram · Discord · WhatsApp</div>
+      <div class="badge"><div class="dot" style="background:#3b82f6"></div>MIT License</div>
+    </div>
+  </div>
+
+  <!-- Prerequisites -->
+  <div class="section-title">Prerequisites</div>
+  <div class="prereq-grid">
+    <div class="prereq-card">
+      <div class="prereq-icon" style="background:rgba(34,211,160,0.1)">🟢</div>
+      <div>
+        <div class="prereq-name">Node.js</div>
+        <div class="prereq-note">v18 or higher</div>
+      </div>
+    </div>
+    <div class="prereq-card">
+      <div class="prereq-icon" style="background:rgba(236,72,153,0.1)">📟</div>
+      <div>
+        <div class="prereq-name">tmux</div>
+        <div class="prereq-note">for 24/7 operation</div>
+      </div>
+    </div>
+    <div class="prereq-card">
+      <div class="prereq-icon" style="background:rgba(249,115,22,0.1)">🔧</div>
+      <div>
+        <div class="prereq-name">jq + Bash 4.0+</div>
+        <div class="prereq-note">macOS: brew install bash</div>
+      </div>
+    </div>
+    <div class="prereq-card">
+      <div class="prereq-icon" style="background:rgba(167,139,250,0.1)">🤖</div>
+      <div>
+        <div class="prereq-name">Claude Code CLI</div>
+        <div class="prereq-note">or Codex CLI</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Steps -->
+  <div class="section-title">Installation Steps</div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-title">Install TinyClaw</div>
+    </div>
+    <div class="step-desc">Choose one of three installation methods. One-line install is recommended.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-comment"># Option 1: One-line install (Recommended)</span>
+<span class="c-cmd">curl</span> -fsSL https://raw.githubusercontent.com/jlia0/tinyclaw/main/scripts/remote-install.sh | bash
+
+<span class="c-comment"># Option 2: From release tarball</span>
+<span class="c-cmd">wget</span> https://github.com/jlia0/tinyclaw/releases/latest/download/tinyclaw-bundle.tar.gz
+<span class="c-cmd">tar</span> -xzf tinyclaw-bundle.tar.gz
+<span class="c-cmd">cd</span> tinyclaw && ./scripts/install.sh
+
+<span class="c-comment"># Option 3: From source</span>
+<span class="c-cmd">git clone</span> https://github.com/jlia0/tinyclaw.git
+<span class="c-cmd">cd</span> tinyclaw && npm install && ./scripts/install.sh</pre>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-title">Install AI Provider CLI</div>
+    </div>
+    <div class="step-desc">TinyClaw requires either Claude Code CLI or Codex CLI — it does not support direct API keys or OpenRouter.</div>
+    <div class="provider-row">
+      <div class="provider-card">
+        <div class="provider-name" style="color:#ec4899">🟣 Anthropic (Claude)</div>
+        <div class="provider-detail">Install Claude Code CLI<br>authenticate with your<br>Anthropic account<br><br>Models: Sonnet, Opus</div>
+      </div>
+      <div class="provider-card">
+        <div class="provider-name" style="color:#22d3a0">🟢 OpenAI (Codex)</div>
+        <div class="provider-detail">Install Codex CLI<br>authenticate with your<br>OpenAI account<br><br>Models: gpt-5.3-codex</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-title">Run Setup Wizard</div>
+    </div>
+    <div class="step-desc">The interactive wizard walks you through channels, workspace, agents and provider selection.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-cmd">tinyclaw start</span>   <span class="c-comment"># Runs interactive setup wizard</span></pre>
+    </div>
+    <div class="config-note">Wizard covers: <strong>channel selection</strong> (Discord/WhatsApp/Telegram) · bot tokens · workspace name · default agent · AI provider · model · heartbeat interval</div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div class="step-title">Configure Agents & Teams</div>
+    </div>
+    <div class="step-desc">Edit <code style="font-family:'JetBrains Mono',monospace;color:#ec4899;font-size:13px">.tinyclaw/settings.json</code> to define your agents and teams.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">json · .tinyclaw/settings.json</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre>{
+  <span class="c-key">"channels"</span>: {
+    <span class="c-key">"enabled"</span>: [<span class="c-string">"telegram"</span>, <span class="c-string">"discord"</span>],
+    <span class="c-key">"telegram"</span>: { <span class="c-key">"bot_token"</span>: <span class="c-string">"YOUR_TOKEN"</span> }
+  },
+  <span class="c-key">"agents"</span>: {
+    <span class="c-key">"coder"</span>: {
+      <span class="c-key">"name"</span>: <span class="c-string">"Code Assistant"</span>,
+      <span class="c-key">"provider"</span>: <span class="c-string">"anthropic"</span>,
+      <span class="c-key">"model"</span>: <span class="c-string">"sonnet"</span>
+    },
+    <span class="c-key">"writer"</span>: {
+      <span class="c-key">"name"</span>: <span class="c-string">"Technical Writer"</span>,
+      <span class="c-key">"provider"</span>: <span class="c-string">"anthropic"</span>,
+      <span class="c-key">"model"</span>: <span class="c-string">"sonnet"</span>
+    }
+  },
+  <span class="c-key">"teams"</span>: {
+    <span class="c-key">"dev"</span>: {
+      <span class="c-key">"name"</span>: <span class="c-string">"Dev Team"</span>,
+      <span class="c-key">"agents"</span>: [<span class="c-string">"coder"</span>, <span class="c-string">"writer"</span>],
+      <span class="c-key">"leader_agent"</span>: <span class="c-string">"coder"</span>
+    }
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div class="step-title">Key Commands</div>
+    </div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-cmd">tinyclaw start</span>                        <span class="c-comment"># Start daemon</span>
+<span class="c-cmd">tinyclaw status</span>                       <span class="c-comment"># Check status</span>
+<span class="c-cmd">tinyclaw agent list</span>                   <span class="c-comment"># List agents</span>
+<span class="c-cmd">tinyclaw team visualize dev</span>           <span class="c-comment"># Live TUI dashboard</span>
+<span class="c-cmd">tinyclaw logs all</span>                     <span class="c-comment"># View all logs</span>
+
+<span class="c-comment"># In-chat routing (Telegram/Discord/WhatsApp)</span>
+<span class="c-string">@coder</span> fix the authentication bug      <span class="c-comment"># Route to agent</span>
+<span class="c-string">@dev</span> review this PR                    <span class="c-comment"># Route to team</span>
+/agent                                 <span class="c-comment"># List available agents</span></pre>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-note">github.com/jlia0/tinyclaw · MIT License · Experimental</div>
+    <div class="footer-note" style="color:#ec4899">#TinyClaw #MultiAgent #OpenClaw</div>
+  </div>
+
+</div>
+</body>
+</html>

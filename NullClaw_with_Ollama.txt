@@ -1,0 +1,110 @@
+Install Dependencies
+
+sudo apt install libsqlite3-dev -y
+
+Install Zig
+
+wget https://ziglang.org/download/0.15.2/zig-x86_64-linux-0.15.2.tar.xz
+tar -xf zig-x86_64-linux-0.15.2.tar.xz
+sudo mv zig-x86_64-linux-0.15.2 /usr/local/zig
+echo 'export PATH=$PATH:/usr/local/zig' >> ~/.bashrc
+source ~/.bashrc
+
+zig version
+
+Clone and Build
+
+git clone https://github.com/nullclaw/nullclaw.git
+cd nullclaw
+zig build -Doptimize=ReleaseSmall
+sudo cp zig-out/bin/nullclaw /usr/local/bin/
+
+
+Onboard
+
+nullclaw onboard --interactive
+
+Config file ~/.nullclaw/config.json
+
+json{
+  "default_provider": "ollama",
+  "default_temperature": 0.7,
+  "models": {
+    "providers": {
+      "ollama": {
+        "api_key": "dummy",
+        "api_url": "http://localhost:11434/v1"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {"primary": "glm-4.7-flash:latest"}
+    }
+  },
+  "channels": {
+    "telegram": {
+      "accounts": {
+        "main": {
+          "bot_token": "YOUR_BOT_TOKEN_HERE",
+          "allow_from": ["YOUR_TELEGRAM_USER_ID"]
+        }
+      }
+    }
+  },
+  "diagnostics": {
+    "backend": "none"
+  },
+  "autonomy": {
+    "level": "supervised",
+    "workspace_only": true,
+    "max_actions_per_hour": 20,
+    "max_cost_per_day_cents": 500
+  },
+  "memory": {
+    "backend": "sqlite",
+    "auto_save": true,
+    "hygiene_enabled": true,
+    "archive_after_days": 7,
+    "purge_after_days": 30,
+    "conversation_retention_days": 30
+  },
+  "gateway": {
+    "port": 3000,
+    "host": "127.0.0.1",
+    "require_pairing": true
+  },
+  "tools": {
+    "shell_timeout_secs": 60,
+    "shell_max_output_bytes": 1048576,
+    "max_file_size_bytes": 10485760,
+    "web_fetch_max_chars": 50000
+  },
+  "hardware": {
+    "enabled": false,
+    "transport": "none",
+    "baud_rate": 115200
+  }
+}
+
+Test Agent
+
+nullclaw agent -m "Hello, what is 2+2?"
+
+Start Daemon
+
+bashnullclaw daemon
+
+Check Status and Health
+
+nullclaw status
+
+nullclaw doctor
+
+Check Binary Size
+
+ls -lh zig-out/bin/nullclaw
+
+Check Memory Usage
+
+bashps aux | grep nullclaw

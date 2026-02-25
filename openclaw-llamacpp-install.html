@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw + llama.cpp — Installation Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090d;
+    --surface: #0d1117;
+    --surface2: #131920;
+    --border: #1e2a38;
+    --accent: #e85d04;
+    --accent2: #f48c06;
+    --green: #2dd4bf;
+    --blue: #60a5fa;
+    --text: #e2eaf5;
+    --muted: #4a6070;
+    --code-bg: #080c12;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 48px 24px;
+    background-image:
+      radial-gradient(ellipse at 70% 0%, rgba(232,93,4,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 0% 100%, rgba(45,212,191,0.04) 0%, transparent 50%);
+  }
+
+  .page { max-width: 900px; margin: 0 auto; }
+
+  /* Hero */
+  .hero {
+    margin-bottom: 48px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(232,93,4,0.08);
+    border: 1px solid rgba(232,93,4,0.22);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: blink 2s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  h1 {
+    font-size: 50px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 14px;
+  }
+
+  .title-main { color: var(--text); }
+  .title-plus { color: var(--muted); font-weight: 400; font-size: 36px; }
+  .title-llama { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 28px;
+    max-width: 600px;
+  }
+
+  /* Spec row */
+  .spec-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .spec-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+
+  .spec-chip .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .spec-label { color: var(--muted); }
+  .spec-val { color: var(--text); font-weight: 600; }
+
+  /* Section title */
+  .section-title {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Steps */
+  .step { margin-bottom: 34px; }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(232,93,4,0.08);
+    border: 1.5px solid rgba(232,93,4,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .step-title { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+
+  .step-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-left: 46px;
+    margin-bottom: 14px;
+    line-height: 1.65;
+  }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-left: 46px;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.012);
+  }
+
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .code-dots { display: flex; gap: 6px; }
+  .code-dots span { width: 8px; height: 8px; border-radius: 50%; }
+
+  pre {
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.75;
+    overflow-x: auto;
+    color: #c9d5e3;
+  }
+
+  .c-comment { color: #2a3d52; }
+  .c-cmd { color: #2dd4bf; }
+  .c-string { color: #f48c06; }
+  .c-key { color: #a78bfa; }
+  .c-val { color: #60a5fa; }
+  .c-num { color: #e85d04; }
+  .c-bool { color: #34d399; }
+
+  /* Note boxes */
+  .note-box {
+    margin-left: 46px;
+    margin-top: 12px;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .note-box.info {
+    background: rgba(96,165,250,0.06);
+    border: 1px solid rgba(96,165,250,0.18);
+    color: #94b8d4;
+  }
+
+  .note-box.warn {
+    background: rgba(232,93,4,0.06);
+    border: 1px solid rgba(232,93,4,0.2);
+    color: #b8927a;
+  }
+
+  .note-box.success {
+    background: rgba(45,212,191,0.05);
+    border: 1px solid rgba(45,212,191,0.18);
+    color: #7ab8b0;
+  }
+
+  .note-icon { flex-shrink: 0; font-size: 15px; margin-top: 1px; }
+  .note-box strong { color: var(--text); }
+
+  /* api comparison */
+  .api-compare {
+    margin-left: 46px;
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .api-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .api-card.active { border-color: rgba(232,93,4,0.35); }
+
+  .api-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .api-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .api-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* Model server info */
+  .server-grid {
+    margin-left: 46px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .server-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+
+  .server-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .server-val { font-size: 13px; font-weight: 600; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+
+  /* Footer */
+  .footer {
+    margin-top: 52px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .footer-note { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">Installation Guide</div>
+    <h1>
+      <span class="title-main">OpenClaw</span><br>
+      <span class="title-plus">+ </span><span class="title-llama">llama.cpp</span>
+    </h1>
+    <div class="hero-sub">Install OpenClaw from scratch on Ubuntu and connect it to a local llama.cpp server. No API costs. No cloud. Full inference on your own GPU.</div>
+
+    <div class="spec-row">
+      <div class="spec-chip"><div class="dot" style="background:#e85d04"></div><span class="spec-label">Model&nbsp;</span><span class="spec-val">Qwen3.5-35B-A3B Q8_0</span></div>
+      <div class="spec-chip"><div class="dot" style="background:#2dd4bf"></div><span class="spec-label">GPU&nbsp;</span><span class="spec-val">NVIDIA RTX A6000</span></div>
+      <div class="spec-chip"><div class="dot" style="background:#60a5fa"></div><span class="spec-label">Port&nbsp;</span><span class="spec-val">8080 (llama.cpp)</span></div>
+      <div class="spec-chip"><div class="dot" style="background:#a78bfa"></div><span class="spec-label">Node&nbsp;</span><span class="spec-val">v22+</span></div>
+      <div class="spec-chip"><div class="dot" style="background:#34d399"></div><span class="spec-label">Cost&nbsp;</span><span class="spec-val">$0 / token</span></div>
+    </div>
+  </div>
+
+  <!-- Prerequisites -->
+  <div class="section-title">Prerequisites</div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:rgba(45,212,191,0.08);border-color:rgba(45,212,191,0.3);color:var(--green)">✓</div>
+      <div class="step-title">llama.cpp server already running</div>
+    </div>
+    <div class="step-desc">Your llama.cpp server must be running and accessible before starting. Verify it is up:</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash · verify llama.cpp</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-cmd">curl</span> http://localhost:8080/v1/models
+<span class="c-comment"># Should return model list JSON</span></pre>
+    </div>
+    <div class="server-grid">
+      <div class="server-card"><div class="server-label">Endpoint</div><div class="server-val">localhost:8080</div></div>
+      <div class="server-card"><div class="server-label">Model ID</div><div class="server-val">Qwen3.5-35B-A3B</div></div>
+      <div class="server-card"><div class="server-label">Context</div><div class="server-val">32768 tokens</div></div>
+      <div class="server-card"><div class="server-label">Speed</div><div class="server-val">~77 tok/sec</div></div>
+    </div>
+  </div>
+
+  <!-- Steps -->
+  <div class="section-title">Installation Steps</div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-title">Install Node.js 22</div>
+    </div>
+    <div class="step-desc">OpenClaw requires Node.js v22 or higher. Install via NodeSource.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-cmd">curl</span> -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+<span class="c-cmd">sudo apt-get install</span> -y nodejs
+<span class="c-cmd">node --version</span>   <span class="c-comment"># should print v22.x.x</span></pre>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-title">Install OpenClaw</div>
+    </div>
+    <div class="step-desc">Install the latest OpenClaw globally via npm.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-cmd">npm install</span> -g openclaw@latest
+<span class="c-cmd">openclaw --version</span></pre>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-title">Run Onboarding Wizard</div>
+    </div>
+    <div class="step-desc">Run the wizard to initialize the workspace and install the gateway daemon. Skip provider selection — we configure llama.cpp manually in the next step.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-cmd">openclaw onboard</span> --install-daemon</pre>
+    </div>
+    <div class="note-box info" style="margin-top:12px">
+      <span class="note-icon">ℹ</span>
+      <span>Complete the wizard with any provider selection. The <strong>config file will be overwritten</strong> in the next step with the correct llama.cpp settings.</span>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div class="step-title">Configure for llama.cpp</div>
+    </div>
+    <div class="step-desc">Replace the contents of <code style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px">~/.openclaw/openclaw.json</code> with the following config.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">json · ~/.openclaw/openclaw.json</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre>{
+  <span class="c-key">"models"</span>: {
+    <span class="c-key">"providers"</span>: {
+      <span class="c-key">"llamacpp"</span>: {
+        <span class="c-key">"baseUrl"</span>: <span class="c-string">"http://127.0.0.1:8080/v1"</span>,
+        <span class="c-key">"apiKey"</span>: <span class="c-string">"dummy"</span>,
+        <span class="c-key">"api"</span>: <span class="c-string">"openai-completions"</span>,
+        <span class="c-key">"models"</span>: [
+          {
+            <span class="c-key">"id"</span>: <span class="c-string">"Qwen3.5-35B-A3B"</span>,
+            <span class="c-key">"name"</span>: <span class="c-string">"Qwen3.5-35B-A3B"</span>,
+            <span class="c-key">"reasoning"</span>: <span class="c-bool">true</span>,
+            <span class="c-key">"input"</span>: [<span class="c-string">"text"</span>],
+            <span class="c-key">"cost"</span>: {
+              <span class="c-key">"input"</span>: <span class="c-num">0</span>, <span class="c-key">"output"</span>: <span class="c-num">0</span>,
+              <span class="c-key">"cacheRead"</span>: <span class="c-num">0</span>, <span class="c-key">"cacheWrite"</span>: <span class="c-num">0</span>
+            },
+            <span class="c-key">"contextWindow"</span>: <span class="c-num">32768</span>,
+            <span class="c-key">"maxTokens"</span>: <span class="c-num">8192</span>
+          }
+        ]
+      }
+    }
+  },
+  <span class="c-key">"agents"</span>: {
+    <span class="c-key">"defaults"</span>: {
+      <span class="c-key">"model"</span>: {
+        <span class="c-key">"primary"</span>: <span class="c-string">"llamacpp/Qwen3.5-35B-A3B"</span>
+      },
+      <span class="c-key">"workspace"</span>: <span class="c-string">"/home/Ubuntu/.openclaw/workspace"</span>
+    }
+  },
+  <span class="c-key">"gateway"</span>: {
+    <span class="c-key">"port"</span>: <span class="c-num">18789</span>,
+    <span class="c-key">"mode"</span>: <span class="c-string">"local"</span>,
+    <span class="c-key">"bind"</span>: <span class="c-string">"loopback"</span>,
+    <span class="c-key">"auth"</span>: {
+      <span class="c-key">"mode"</span>: <span class="c-string">"token"</span>
+    }
+  }
+}</pre>
+    </div>
+
+    <!-- API format note -->
+    <div class="api-compare">
+      <div class="api-card active">
+        <div class="api-title" style="color:var(--green)">
+          openai-completions
+          <span class="api-badge" style="background:rgba(45,212,191,0.15);color:var(--green)">✓ USE THIS</span>
+        </div>
+        <div class="api-desc">Standard OpenAI format. Correct for llama.cpp, vLLM, LiteLLM, and Ollama. Returns standard chat/completions response.</div>
+      </div>
+      <div class="api-card">
+        <div class="api-title" style="color:var(--muted)">
+          openai-responses
+          <span class="api-badge" style="background:rgba(100,100,100,0.15);color:var(--muted)">NOT FOR LLAMA.CPP</span>
+        </div>
+        <div class="api-desc">Only for specialized APIs like MiniMax that return non-standard response formats. Do not use with llama.cpp.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div class="step-title">Start the Gateway</div>
+    </div>
+    <div class="step-desc">Start OpenClaw gateway in verbose mode to confirm llama.cpp connection.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-cmd">openclaw gateway</span> --port 18789 --verbose</pre>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">6</div>
+      <div class="step-title">Test the Agent</div>
+    </div>
+    <div class="step-desc">Send a message directly to the agent and confirm it is routing through llama.cpp.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">bash</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-cmd">openclaw agent</span> --message <span class="c-string">"What is the derivative of x squared times sin 3x?"</span>
+
+<span class="c-comment"># Check gateway status</span>
+<span class="c-cmd">openclaw status</span>
+
+<span class="c-comment"># Run full diagnostics</span>
+<span class="c-cmd">openclaw doctor</span></pre>
+    </div>
+    <div class="note-box success" style="margin-top:12px">
+      <span class="note-icon">✓</span>
+      <span>If the response arrives and matches the quality you saw from the Python test, <strong>llama.cpp routing is working correctly</strong>. You can now add any channel (Telegram, Discord, Slack) on top of this config.</span>
+    </div>
+  </div>
+
+  <!-- Step 7 - optional channels -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">7</div>
+      <div class="step-title">Add Channels (Optional)</div>
+    </div>
+    <div class="step-desc">To add Telegram or any other channel, extend the config with the channels section. The llama.cpp provider config stays exactly the same.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">json · add to openclaw.json</div>
+        <div class="code-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      </div>
+      <pre><span class="c-key">"channels"</span>: {
+  <span class="c-key">"telegram"</span>: {
+    <span class="c-key">"botToken"</span>: <span class="c-string">"YOUR_BOT_TOKEN_HERE"</span>,
+    <span class="c-key">"dmPolicy"</span>: <span class="c-string">"pairing"</span>
+  }
+}</pre>
+    </div>
+    <div class="note-box warn" style="margin-top:12px">
+      <span class="note-icon">⚠</span>
+      <span>After adding a channel, restart the gateway: <strong style="color:var(--accent);font-family:'JetBrains Mono',monospace">openclaw gateway restart</strong></span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-note">openclaw.ai · github.com/openclaw/openclaw · Node v22+</div>
+    <div class="footer-note" style="color:var(--accent)">#OpenClaw #LlamaCpp #LocalAI #Qwen #OpenSource</div>
+  </div>
+
+</div>
+</body>
+</html>

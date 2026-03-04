@@ -1,0 +1,227 @@
+
+Prompt to Generate Dataset:
+
+You are a Turkish culinary expert with deep knowledge of Turkish kebab culture, 
+history, and cuisine. Your task is to generate a high-quality fine-tuning dataset 
+for training a small language model to become a Turkish kebab expert.
+
+Generate 200 question and answer pairs covering Turkish kebabs in the following format:
+{"prompt": "question here", "completion": "detailed expert answer here"}
+
+Each answer must be detailed, accurate, culturally rich and at least 3-5 sentences long.
+
+Cover the following topics evenly across the 200 pairs:
+
+KEBAB VARIETIES (cover each in depth):
+Adana, Urfa, Shish, Döner, Iskender, Lahmacun, Pide, Beyti, Çöp Şiş, 
+Testi Kebabı, Tandır, Ali Nazik, Kuyu Kebabı, Cağ Kebabı, Orman Kebabı,
+Kaburga, Patlıcan Kebabı, Güveç, Çılbır style kebabs, Ciğer
+
+TOPICS TO COVER PER VARIETY:
+- What it is and how it looks
+- Which region of Turkey it originates from
+- Exact ingredients and meat type (lamb, beef, chicken, liver)
+- Spice profile and marinade details
+- Traditional cooking method (mangal, tandır, spit, clay pot)
+- How it is traditionally served and with what sides
+- Cultural significance and history
+- How to identify authentic vs non-authentic versions
+- Common variations across different cities
+- Pairing with Turkish bread types, mezze, drinks
+
+ADDITIONAL TOPICS:
+- Turkish kebab culture and etiquette
+- Difference between kebab styles
+- Regional Turkish cuisine differences
+- Turkish spices used in kebab cooking
+- How to cook each kebab at home
+- Common mistakes when making Turkish kebab
+- Street food vs restaurant kebab culture in Turkey
+- Seasonal kebab traditions
+- Vegetarian kebab alternatives in Turkish cuisine
+- Turkish kebab vs other Middle Eastern kebab styles
+
+QUALITY RULES:
+- Every answer must sound like a passionate Turkish food expert speaking
+- Include Turkish words with English explanations where appropriate
+- Include specific city names, regions, history where relevant
+- Answers must be factually accurate
+- Vary the question styles: some how, some what, some why, 
+  some compare, some historical, some practical cooking advice
+- Do not repeat the same question twice
+- Output must be valid JSONL — one JSON object per line
+- No preamble, no explanation, just raw JSONL output
+
+Start generating now.
+
+==============================================
+
+Action Plan for Fine-Tuning:
+
+pip install torch torchvision torchaudio --upgrade --pre --index-url https://download.pytorch.org/whl/nightly/cu121
+
+# Core dependencies from source
+pip install git+https://github.com/huggingface/transformers
+pip install git+https://github.com/huggingface/accelerate
+
+# Unsloth
+pip install unsloth unsloth_zoo
+
+# Other dependencies
+pip install huggingface_hub datasets trl peft bitsandbytes
+
+# Launch Jupyter
+jupyter notebook
+
+Cell 1 — Check GPU
+import torch
+from I.display import Markdown, display
+
+display(Markdown("## ⚙️ System Check"))
+print(f"PyTorch version: {torch.__version__}")
+print(f"CUDA available: {torch.cuda.is_available()}")
+if torch.cuda.is_available():
+    print(f"GPU: {torch.cuda.get_device_name(0)}")
+    print(f"VRAM: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
+
+Cell 2 — Load model with Unsloth
+from unsloth import FastLanguageModel
+
+display(Markdown("## 📦 Loading Qwen3.5-0.8B with Unsloth"))
+
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name = "Qwen/Qwen3.5-0.8B",
+    max_seq_length = 2048,
+    load_in_4bit = False,
+    load_in_16bit = True,
+)
+
+print("✅ Model loaded successfully")
+
+Cell 3 — Attach LoRA adapters
+display(Markdown("## 🔧 Attaching LoRA Adapters"))
+
+model = FastLanguageModel.get_peft_model(
+    model,
+    r = 16,
+    target_modules = [
+        "q_proj", "k_proj", "v_proj", "o_proj",
+        "gate_proj", "up_proj", "down_proj",
+    ],
+    lora_alpha = 16,
+    lora_dropout = 0,
+    bias = "none",
+    use_gradient_checkpointing = "unsloth",
+    random_state = 3407,
+    max_seq_length = 2048,
+)
+
+print("✅ LoRA adapters attached")
+print(f"Trainable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad):,}")
+
+Cell 4 — Load and preview dataset
+from datasets import load_dataset
+from I.display import Markdown, display
+
+display(Markdown("## 📂 Loading Turkish Kebab Dataset"))
+
+dataset = load_dataset(
+    "json",
+    data_files={"train": "/home/Ubuntu/finetune/dataset.jsonl"},
+    split="train"
+)
+
+print(f"✅ Dataset loaded: {len(dataset)} records")
+print("\n--- Sample record ---")
+print(f"Prompt: {dataset[0]['prompt']}")
+print(f"Completion: {dataset[0]['completion']}")
+
+Cell 5 — Format dataset
+display(Markdown("## 🔄 Formatting Dataset for Training"))
+
+def format_example(example):
+    return {
+        "text": f"<|im_start|>user\n{example['prompt']}<|im_end|>\n<|im_start|>assistant\n{example['completion']}<|im_end|>"
+    }
+
+dataset = dataset.map(format_example)
+print("✅ Dataset formatted")
+print("\n--- Formatted sample ---")
+print(dataset[0]['text'])
+
+Cell 6 — Train
+from trl import SFTTrainer, SFTConfig
+
+display(Markdown("## 🚀 Starting Fine-tuning"))
+
+trainer = SFTTrainer(
+    model = model,
+    train_dataset = dataset,
+    tokenizer = tokenizer,
+    args = SFTConfig(
+        dataset_text_field = "text",
+        max_seq_length = 2048,
+        per_device_train_batch_size = 2,
+        gradient_accumulation_steps = 4,
+        warmup_steps = 10,
+        num_train_epochs = 3,
+        logging_steps = 5,
+        output_dir = "/home/Ubuntu/finetune/outputs",
+        optim = "adamw_8bit",
+        seed = 3407,
+        dataset_num_proc = 2,
+        fp16 = not torch.cuda.is_bf16_supported(),
+        bf16 = torch.cuda.is_bf16_supported(),
+    ),
+)
+
+trainer_stats = trainer.train()
+print(f"✅ Training complete!")
+print(f"Training time: {trainer_stats.metrics['train_runtime']:.0f} seconds")
+print(f"Final loss: {trainer_stats.metrics['train_loss']:.4f}")
+
+Cell 7 — Test base model first (before saving)
+display(Markdown("## 🧪 Testing: Base Model vs Fine-tuned Model"))
+
+FastLanguageModel.for_inference(model)
+
+def ask(question):
+    messages = [{"role": "user", "content": question}]
+    inputs = tokenizer.apply_chat_template(
+        messages,
+        tokenize=True,
+        add_generation_prompt=True,
+        return_tensors="pt"
+    ).to("cuda")
+    
+    outputs = model.generate(
+        input_ids=inputs,
+        max_new_tokens=512,
+        temperature=0.7,
+        top_p=0.8,
+        do_sample=True,
+    )
+    response = tokenizer.decode(outputs[0][inputs.shape[1]:], skip_special_tokens=True)
+    return response
+
+question = "What makes Adana kebab different from Urfa kebab?"
+print(f"Question: {question}\n")
+print(f"Answer: {ask(question)}")
+
+Cell 8 — Save the model
+display(Markdown("## 💾 Saving Fine-tuned Model"))
+
+# Save LoRA adapters only
+model.save_pretrained("/home/Ubuntu/finetune/qwen35_kebab_lora")
+tokenizer.save_pretrained("/home/Ubuntu/finetune/qwen35_kebab_lora")
+
+# Also save merged 16bit for vLLM
+model.save_pretrained_merged(
+    "/home/Ubuntu/finetune/qwen35_kebab_merged",
+    tokenizer,
+    save_method="merged_16bit"
+)
+
+print("✅ Model saved!")
+print("LoRA adapters: /home/Ubuntu/finetune/qwen35_kebab_lora")
+print("Merged model:  /home/Ubuntu/finetune/qwen35_kebab_merged")

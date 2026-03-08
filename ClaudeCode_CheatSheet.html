@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Cheatsheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #16161f;
+    --border: #1e1e2e;
+    --accent: #d4a843;
+    --accent2: #e8c87a;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --green: #4ade80;
+    --blue: #60a5fa;
+    --pink: #f472b6;
+    --purple: #a78bfa;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 40px 24px;
+    background-image: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(212,168,67,0.07) 0%, transparent 60%);
+  }
+
+  .page { max-width: 960px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 44px; }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    border: 1px solid rgba(212,168,67,0.3);
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  h1 span { color: var(--accent); }
+  .subtitle { color: var(--muted); font-size: 0.95rem; }
+
+  .divider {
+    width: 50px; height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    margin: 16px auto 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .full-width { grid-column: 1 / -1; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .card-icon {
+    font-size: 14px;
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    background: rgba(212,168,67,0.1);
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent2);
+  }
+
+  .card-body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .two-col-body {
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 10px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .cmd {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--green);
+    word-break: break-all;
+  }
+
+  .cmd.slash  { color: var(--blue); }
+  .cmd.flag   { color: var(--pink); }
+  .cmd.tip    { color: var(--purple); }
+  .cmd.kb     { color: var(--accent); }
+
+  .desc {
+    font-size: 0.73rem;
+    color: #7878a0;
+    line-height: 1.4;
+  }
+
+  .section-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 0 2px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: rgba(74,222,128,0.1);
+    color: var(--green);
+    border: 1px solid rgba(74,222,128,0.2);
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  footer span { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+    .two-col-body { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="badge">▸ Official Reference · v2.1.71</div>
+    <h1>Claude <span>Code</span> Cheatsheet</h1>
+    <p class="subtitle">Every command you need — sourced directly from the official docs</p>
+    <div class="divider"></div>
+  </header>
+
+  <div class="grid">
+
+    <!-- INSTALL & AUTH -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">⚙</div>
+        <div class="card-title">Install & Authentication</div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="cmd">curl -fsSL https://claude.ai/install.sh | bash</span>
+          <span class="desc">Install Claude Code (native binary, recommended)</span>
+        </div>
+        <div class="row">
+          <span class="cmd">source ~/.bashrc</span>
+          <span class="desc">Reload shell after install</span>
+        </div>
+        <div class="row">
+          <span class="cmd">claude --version</span>
+          <span class="desc">Verify installation</span>
+        </div>
+        <div class="row">
+          <span class="cmd">claude auth login</span>
+          <span class="desc">Sign in to your Anthropic account</span>
+        </div>
+        <div class="row">
+          <span class="cmd">claude auth logout</span>
+          <span class="desc">Log out from your account</span>
+        </div>
+        <div class="row">
+          <span class="cmd">claude auth status</span>
+          <span class="desc">Show authentication status</span>
+        </div>
+        <div class="row">
+          <span class="cmd">claude update</span>
+          <span class="desc">Update to latest version</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLI COMMANDS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">▶</div>
+        <div class="card-title">CLI Commands</div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="cmd">claude</span>
+          <span class="desc">Start interactive session in current directory</span>
+        </div>
+        <div class="row">
+          <span class="cmd">claude "explain this project"</span>
+          <span class="desc">Start session with an initial prompt</span>
+        </div>
+        <div class="row">
+          <span class="cmd flag">claude -p "your task"</span>
+          <span class="desc">Run one-off query then exit (non-interactive)</span>
+        </div>
+        <div class="row">
+          <span class="cmd flag">cat file.txt | claude -p "explain"</span>
+          <span class="desc">Process piped content</span>
+        </div>
+        <div class="row">
+          <span class="cmd flag">claude -c</span>
+          <span class="desc">Continue most recent conversation</span>
+        </div>
+        <div class="row">
+          <span class="cmd flag">claude --model sonnet</span>
+          <span class="desc">Start with a specific model</span>
+        </div>
+        <div class="row">
+          <span class="cmd flag">claude --debug</span>
+          <span class="desc">Start with debug logging enabled</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLASH COMMANDS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Slash Commands (Inside Session)</div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="cmd slash">/help</span>
+          <span class="desc">Show help and all available commands</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/clear</span>
+          <span class="desc">Clear conversation history and free context. Aliases: /reset, /new</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/compact [instructions]</span>
+          <span class="desc">Compress conversation with optional focus instructions</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/cost</span>
+          <span class="desc">Show token usage statistics for current session</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/context</span>
+          <span class="desc">Visualize context window usage as a colored grid</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/model [model]</span>
+          <span class="desc">Select or switch AI model mid-session</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/status</span>
+          <span class="desc">Show version, model, account and connectivity</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/init</span>
+          <span class="desc">Initialize project with CLAUDE.md guide</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/doctor</span>
+          <span class="desc">Diagnose and verify installation and settings</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/memory</span>
+          <span class="desc">Edit CLAUDE.md memory files and auto-memory</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/permissions</span>
+          <span class="desc">View or update tool permissions</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/feedback</span>
+          <span class="desc">Submit feedback or report a bug. Alias: /bug</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/exit</span>
+          <span class="desc">Exit Claude Code. Alias: /quit</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL SELECTION -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🧠</div>
+        <div class="card-title">Model Selection</div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="cmd slash">/model</span>
+          <span class="desc">Open interactive model picker</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/model haiku</span>
+          <span class="desc">Claude Haiku — fastest & cheapest, simple tasks</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/model sonnet <span class="tag">recommended</span></span>
+          <span class="desc">Claude Sonnet — best balance of speed and quality</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/model opus</span>
+          <span class="desc">Claude Opus — most powerful, complex reasoning</span>
+        </div>
+        <div class="section-label">Keyboard shortcut</div>
+        <div class="row">
+          <span class="cmd kb">Alt+P (Option+P on macOS)</span>
+          <span class="desc">Switch model without clearing your current prompt</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KEYBOARD SHORTCUTS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">⌨</div>
+        <div class="card-title">Keyboard Shortcuts</div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="cmd kb">Ctrl+C</span>
+          <span class="desc">Cancel current input or generation</span>
+        </div>
+        <div class="row">
+          <span class="cmd kb">Ctrl+D</span>
+          <span class="desc">Exit Claude Code session</span>
+        </div>
+        <div class="row">
+          <span class="cmd kb">Ctrl+L</span>
+          <span class="desc">Clear terminal screen (keeps conversation)</span>
+        </div>
+        <div class="row">
+          <span class="cmd kb">Ctrl+R</span>
+          <span class="desc">Reverse search through command history</span>
+        </div>
+        <div class="row">
+          <span class="cmd kb">Ctrl+G</span>
+          <span class="desc">Open current prompt in your default text editor</span>
+        </div>
+        <div class="row">
+          <span class="cmd kb">Shift+Tab</span>
+          <span class="desc">Toggle between Auto-Accept, Plan, and Normal mode</span>
+        </div>
+        <div class="row">
+          <span class="cmd kb">Esc + Esc</span>
+          <span class="desc">Rewind conversation to a previous point</span>
+        </div>
+        <div class="row">
+          <span class="cmd kb">\ + Enter</span>
+          <span class="desc">Multiline input — works in all terminals</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK INPUT PREFIXES -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔤</div>
+        <div class="card-title">Quick Input Prefixes</div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="cmd tip">! npm test</span>
+          <span class="desc">Bash mode — run shell command directly, output added to conversation</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">@ filename</span>
+          <span class="desc">File path mention — triggers file path autocomplete</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">/ command</span>
+          <span class="desc">Slash command or skill invocation</span>
+        </div>
+        <div class="section-label">Useful combos</div>
+        <div class="row">
+          <span class="cmd tip">cat logs.txt | claude -p "explain errors"</span>
+          <span class="desc">Pipe any file content directly into Claude</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">git diff main | claude -p "review for security"</span>
+          <span class="desc">Pipe git diff for an instant code review</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKING WITH CODE -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">💻</div>
+        <div class="card-title">Working with Code (Natural Language)</div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="cmd tip">Explain what main.py does</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">Add error handling to main.py</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">Write unit tests for the get_users function</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">Find and fix the bug in main.py</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">Refactor this function to use async/await</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">Create a new file called auth.py with JWT login</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">Review all files and summarize the project</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MCP SERVERS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔌</div>
+        <div class="card-title">MCP Servers</div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <span class="cmd">claude mcp list</span>
+          <span class="desc">Show all configured MCP servers</span>
+        </div>
+        <div class="row">
+          <span class="cmd">claude mcp add &lt;name&gt;</span>
+          <span class="desc">Add a new MCP server</span>
+        </div>
+        <div class="row">
+          <span class="cmd">claude mcp remove &lt;name&gt;</span>
+          <span class="desc">Remove an MCP server</span>
+        </div>
+        <div class="row">
+          <span class="cmd">claude mcp get &lt;name&gt;</span>
+          <span class="desc">Show details of a specific server</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/mcp</span>
+          <span class="desc">Manage MCP connections and OAuth inside session</span>
+        </div>
+        <div class="row">
+          <span class="cmd flag">.mcp.json</span>
+          <span class="desc">Project-level MCP config file — place in project root</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRO TIPS FULL WIDTH -->
+    <div class="card full-width">
+      <div class="card-header">
+        <div class="card-icon">💡</div>
+        <div class="card-title">Pro Tips & Best Practices</div>
+      </div>
+      <div class="two-col-body">
+        <div class="row">
+          <span class="cmd slash">/clear</span>
+          <span class="desc">Use between unrelated tasks — free reset, zero token cost</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/compact</span>
+          <span class="desc">Use at logical breakpoints — after research or completing a milestone</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/cost</span>
+          <span class="desc">Check token spend regularly during long sessions</span>
+        </div>
+        <div class="row">
+          <span class="cmd slash">/init</span>
+          <span class="desc">Run this first in any new project to auto-generate CLAUDE.md</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">Always run claude from inside your project directory</span>
+          <span class="desc">Claude reads your files automatically for full context</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">Use Sonnet by default, Opus only when needed</span>
+          <span class="desc">Sonnet handles 80% of tasks at significantly lower cost</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">Keep active MCP servers under 10 per project</span>
+          <span class="desc">Too many MCPs reduce your usable context window</span>
+        </div>
+        <div class="row">
+          <span class="cmd tip">Use CLAUDE.md to give Claude persistent project context</span>
+          <span class="desc">Add your stack, conventions, and common commands — loaded every session</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    Claude Code Cheatsheet &nbsp;·&nbsp; <span>claude.ai</span> &nbsp;·&nbsp; official docs at <span>code.claude.com/docs</span>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agent — Setup Commands</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Crimson+Pro:wght@300;400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #F0D080;
+    --gold-dim: #7A6030;
+    --ink: #0A0A0E;
+    --surface: #0F0F18;
+    --surface2: #16161F;
+    --text: #E8E0D0;
+    --text-dim: #8A8070;
+    --green: #4CAF50;
+  }
+
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.7;
+    padding: 60px 40px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--gold-dim);
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 56px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #F0D080, #C9A84C, #7A6030);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+
+  .tagline {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  .section {
+    margin-bottom: 48px;
+  }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .cmd-block {
+    background: var(--surface);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .cmd-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    padding: 8px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    font-family: 'Crimson Pro', serif;
+  }
+
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--gold-light);
+    padding: 16px 20px;
+    overflow-x: auto;
+    line-height: 1.8;
+  }
+
+  .note {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 8px;
+    padding-left: 4px;
+  }
+
+  .note strong {
+    color: var(--text);
+    font-style: normal;
+  }
+
+  .warn {
+    background: rgba(201,168,76,0.06);
+    border-left: 3px solid var(--gold-dim);
+    padding: 14px 18px;
+    border-radius: 0 4px 4px 0;
+    font-size: 15px;
+    color: var(--text-dim);
+    margin-top: 16px;
+  }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 2px;
+  }
+
+  footer a {
+    color: var(--gold-dim);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>HERMES AGENT</h1>
+  <p class="tagline">Setup Commands · Nous Research · MIT</p>
+</header>
+
+<!-- INSTALL -->
+<div class="section">
+  <h2>1 — Install</h2>
+  <div class="cmd-block">
+    <div class="cmd-label">Linux / macOS / WSL2</div>
+    <pre>curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash</pre>
+  </div>
+  <div class="cmd-block">
+    <div class="cmd-label">Reload shell after install</div>
+    <pre>source ~/.bashrc</pre>
+  </div>
+</div>
+
+<!-- CONFIGURE MODEL -->
+<div class="section">
+  <h2>2 — Configure Model (Ollama)</h2>
+  <div class="cmd-block">
+    <div class="cmd-label">Run model setup wizard</div>
+    <pre>hermes model</pre>
+  </div>
+  <p class="note">Select <strong>Custom OpenAI-compatible endpoint</strong><br>
+  Base URL: <strong>http://localhost:11434/v1</strong><br>
+  Model: <strong>glm-4.7-flash:latest</strong> (or any Ollama model)</p>
+</div>
+
+<!-- START -->
+<div class="section">
+  <h2>3 — Start Chatting</h2>
+  <div class="cmd-block">
+    <div class="cmd-label">Launch CLI</div>
+    <pre>hermes</pre>
+  </div>
+</div>
+
+<!-- TELEGRAM -->
+<div class="section">
+  <h2>4 — Telegram Integration</h2>
+  <div class="cmd-block">
+    <div class="cmd-label">Approve pairing request from Telegram</div>
+    <pre>hermes pairing approve telegram &lt;PAIRING_CODE&gt;</pre>
+  </div>
+  <div class="cmd-block">
+    <div class="cmd-label">Start / check gateway</div>
+    <pre>hermes gateway start
+hermes gateway status</pre>
+  </div>
+  <p class="note">Create your bot at <strong>@BotFather</strong> on Telegram first, then paste the token during setup.</p>
+</div>
+
+<!-- LEARNING LOOP DEMO -->
+<div class="section">
+  <h2>5 — Learning Loop Demo</h2>
+  <div class="cmd-block">
+    <div class="cmd-label">Step 1 — Save something to memory</div>
+    <pre>Remember that my name is Fahd and I prefer concise responses. Save this to your memory.</pre>
+  </div>
+  <div class="cmd-block">
+    <div class="cmd-label">Step 2 — Start a fresh session</div>
+    <pre>/new</pre>
+  </div>
+  <div class="cmd-block">
+    <div class="cmd-label">Step 3 — Test recall</div>
+    <pre>What do you know about me?</pre>
+  </div>
+</div>
+
+<!-- USEFUL COMMANDS -->
+<div class="section">
+  <h2>6 — Useful Commands</h2>
+  <div class="cmd-block">
+    <div class="cmd-label">Re-run setup wizard</div>
+    <pre>hermes setup</pre>
+  </div>
+  <div class="cmd-block">
+    <div class="cmd-label">Change model anytime</div>
+    <pre>hermes model</pre>
+  </div>
+  <div class="cmd-block">
+    <div class="cmd-label">Check for issues</div>
+    <pre>hermes doctor</pre>
+  </div>
+  <div class="cmd-block">
+    <div class="cmd-label">Update to latest version</div>
+    <pre>hermes update</pre>
+  </div>
+  <div class="cmd-block">
+    <div class="cmd-label">Migrate from OpenClaw</div>
+    <pre>hermes claw migrate</pre>
+  </div>
+  <div class="cmd-block">
+    <div class="cmd-label">Resume last session</div>
+    <pre>hermes --continue</pre>
+  </div>
+</div>
+
+<!-- SECURITY NOTE -->
+<div class="section">
+  <h2>⚠ Security Note</h2>
+  <div class="warn">
+    Hermes has full access to your terminal, files, and machine. Restrict Telegram access by setting allowed user IDs during setup, or run <code style="color:var(--gold-light);font-family:'JetBrains Mono',monospace;font-size:12px">hermes setup gateway</code> to configure it later. Do not run with open access on a production server.
+  </div>
+</div>
+
+<footer>
+  <p>github.com/NousResearch/hermes-agent &nbsp;·&nbsp; Built by Nous Research &nbsp;·&nbsp; MIT License</p>
+</footer>
+
+</body>
+</html>

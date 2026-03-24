@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteLLM Supply Chain Attack — Remediation Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E8341A;
+    --red-dim: #3a1208;
+    --red-mid: #c0290f;
+    --amber: #F5A623;
+    --green: #22C55E;
+    --bg: #0c0c0b;
+    --bg2: #141413;
+    --bg3: #1c1c1a;
+    --border: rgba(255,255,255,0.08);
+    --border-red: rgba(232,52,26,0.35);
+    --text: #e8e6df;
+    --text-dim: #888780;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Syne', sans-serif;
+    --body: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  .header {
+    border-bottom: 1px solid var(--border-red);
+    padding: 48px 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(232,52,26,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .threat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(232,52,26,0.15);
+    border: 1px solid var(--border-red);
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--red);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .pulse {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.75); }
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+
+  h1 span { color: var(--red); }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 14px;
+    font-family: var(--mono);
+    font-weight: 400;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 40px 60px;
+  }
+
+  .section {
+    margin-top: 44px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .step {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .step:hover { border-color: rgba(255,255,255,0.16); }
+
+  .step.critical { border-color: rgba(232,52,26,0.3); }
+  .step.critical:hover { border-color: rgba(232,52,26,0.55); }
+
+  .step-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .step-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    min-width: 24px;
+    margin-top: 2px;
+  }
+
+  .step.critical .step-num { color: var(--red); }
+
+  .step-title {
+    flex: 1;
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .tag-critical { background: rgba(232,52,26,0.18); color: var(--red); }
+  .tag-important { background: rgba(245,166,35,0.18); color: var(--amber); }
+  .tag-verify { background: rgba(34,197,94,0.15); color: var(--green); }
+
+  .chevron {
+    color: var(--text-dim);
+    font-size: 13px;
+    transition: transform 0.2s;
+    margin-top: 2px;
+  }
+
+  .step.open .chevron { transform: rotate(90deg); }
+
+  .step-body {
+    display: none;
+    padding: 0 20px 20px 58px;
+    color: rgba(232,230,223,0.8);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .step.open .step-body { display: block; }
+
+  .cmd {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-left: 3px solid rgba(255,255,255,0.15);
+    border-radius: 5px;
+    padding: 12px 16px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: #b8f3b8;
+    margin: 12px 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .step.critical .cmd { border-left-color: rgba(232,52,26,0.5); }
+
+  .note {
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.2);
+    border-radius: 5px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: rgba(245,166,35,0.9);
+    margin-top: 12px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .info-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .info-card h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .info-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .info-card .val {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--red);
+  }
+
+  .affected-list {
+    list-style: none;
+    margin-top: 10px;
+  }
+
+  .affected-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .affected-list li:last-child { border-bottom: none; }
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    flex-shrink: 0;
+  }
+
+  .dot.amber { background: var(--amber); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 40px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 600px) {
+    .header, .container { padding-left: 20px; padding-right: 20px; }
+    .info-grid { grid-template-columns: 1fr; }
+    footer { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="max-width:780px;margin:0 auto;">
+    <div class="threat-badge"><span class="pulse"></span> Supply chain attack — active threat</div>
+    <h1>LiteLLM <span>1.82.8</span><br>Remediation Guide</h1>
+    <p class="subtitle">Discovered: 2026-03-24 · Affected: litellm==1.82.8 and 1.82.7 · Action required: immediate</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>Malicious versions</h3>
+      <p class="val">1.82.8 (primary)<br>1.82.7 (also compromised)</p>
+    </div>
+    <div class="info-card">
+      <h3>Exfil target</h3>
+      <p class="val">https://models.litellm.cloud/<br><span style="color:var(--text-dim);font-size:11px;">Not the official litellm.ai domain</span></p>
+    </div>
+    <div class="info-card">
+      <h3>Trigger mechanism</h3>
+      <p>Runs on every Python startup — no <code style="font-family:var(--mono);font-size:12px;color:#aaa">import litellm</code> needed</p>
+    </div>
+    <div class="info-card">
+      <h3>Monthly download exposure</h3>
+      <p class="val">~97 million</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Step-by-step remediation</div>
+    <div class="steps" id="steps">
+
+      <div class="step critical">
+        <div class="step-header" onclick="toggle(this)">
+          <span class="step-num">01</span>
+          <span class="step-title">Check if you're affected</span>
+          <span class="tag tag-critical">Critical</span>
+          <span class="chevron">›</span>
+        </div>
+        <div class="step-body">
+          <p>Run the following to check the installed litellm version across your environments:</p>
+          <div class="cmd">pip show litellm</div>
+          <p>Look for the malicious .pth file in your site-packages directory:</p>
+          <div class="cmd">find / -name "litellm_init.pth" 2>/dev/null</div>
+          <p>Check uv caches specifically:</p>
+          <div class="cmd">find ~/.cache/uv -name "litellm_init.pth" 2>/dev/null</div>
+          <div class="note">⚠ Also check all virtual environments in your CI/CD pipeline, Docker containers, and any server where litellm was installed on or after March 24, 2026.</div>
+        </div>
+      </div>
+
+      <div class="step critical">
+        <div class="step-header" onclick="toggle(this)">
+          <span class="step-num">02</span>
+          <span class="step-title">Remove the package and purge caches</span>
+          <span class="tag tag-critical">Critical</span>
+          <span class="chevron">›</span>
+        </div>
+        <div class="step-body">
+          <p>Uninstall the affected version immediately:</p>
+          <div class="cmd">pip uninstall litellm -y</div>
+          <p>Purge pip cache to prevent reinstalling from a cached wheel:</p>
+          <div class="cmd">pip cache purge</div>
+          <p>If using uv:</p>
+          <div class="cmd">rm -rf ~/.cache/uv</div>
+          <p>Reinstall a safe version if needed:</p>
+          <div class="cmd">pip install litellm==1.82.6</div>
+        </div>
+      </div>
+
+      <div class="step critical">
+        <div class="step-header" onclick="toggle(this)">
+          <span class="step-num">03</span>
+          <span class="step-title">Rotate ALL credentials — assume full compromise</span>
+          <span class="tag tag-critical">Critical</span>
+          <span class="chevron">›</span>
+        </div>
+        <div class="step-body">
+          <p>If litellm 1.82.7 or 1.82.8 was installed on a machine, treat every credential on that machine as stolen. Rotate immediately:</p>
+          <ul class="affected-list">
+            <li><span class="dot"></span>SSH private keys — regenerate all key pairs</li>
+            <li><span class="dot"></span>AWS access keys and IAM credentials</li>
+            <li><span class="dot"></span>GCP Application Default Credentials</li>
+            <li><span class="dot"></span>Azure tokens and service principal secrets</li>
+            <li><span class="dot"></span>All API keys stored in .env files</li>
+            <li><span class="dot"></span>Database passwords (PostgreSQL, MySQL, Redis)</li>
+            <li><span class="dot"></span>Git tokens and .gitconfig credentials</li>
+            <li><span class="dot"></span>NPM tokens (~/.npmrc)</li>
+            <li><span class="dot"></span>Kubernetes service account tokens</li>
+            <li><span class="dot"></span>Docker registry credentials</li>
+            <li><span class="dot"></span>Crypto wallet keys — if any wallets were on the machine</li>
+          </ul>
+          <div class="note">⚠ The malware encrypted stolen data with a 4096-bit RSA key before exfiltration. You cannot determine what was taken. Assume everything was.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header" onclick="toggle(this)">
+          <span class="step-num">04</span>
+          <span class="step-title">Check for persistence mechanisms</span>
+          <span class="tag tag-important">Important</span>
+          <span class="chevron">›</span>
+        </div>
+        <div class="step-body">
+          <p>The malware attempts to install a persistent backdoor. Check for these files:</p>
+          <div class="cmd">ls -la ~/.config/sysmon/sysmon.py
+ls -la ~/.config/systemd/user/sysmon.service</div>
+          <p>If found, remove them:</p>
+          <div class="cmd">rm -rf ~/.config/sysmon/
+systemctl --user disable sysmon.service 2>/dev/null
+rm -f ~/.config/systemd/user/sysmon.service</div>
+          <p>If you use Kubernetes, audit the kube-system namespace for rogue pods:</p>
+          <div class="cmd">kubectl get pods -n kube-system | grep node-setup</div>
+          <div class="cmd">kubectl get secrets --all-namespaces</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header" onclick="toggle(this)">
+          <span class="step-num">05</span>
+          <span class="step-title">Check transitive dependencies in your projects</span>
+          <span class="tag tag-important">Important</span>
+          <span class="chevron">›</span>
+        </div>
+        <div class="step-body">
+          <p>Even if you didn't install litellm directly, it may have been pulled in by another package. Check your dependency tree:</p>
+          <div class="cmd">pip show dspy | grep Requires
+pip show litellm</div>
+          <p>To audit all packages in your environment for litellm as a dependency:</p>
+          <div class="cmd">pip list | grep litellm</div>
+          <p>Known affected downstream projects include DSPy and various MCP plugins. Pin your requirements to safe versions:</p>
+          <div class="cmd"># In requirements.txt
+litellm==1.82.6  # or latest safe version</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header" onclick="toggle(this)">
+          <span class="step-num">06</span>
+          <span class="step-title">Review network logs for exfiltration attempts</span>
+          <span class="tag tag-verify">Verify</span>
+          <span class="chevron">›</span>
+        </div>
+        <div class="step-body">
+          <p>Check outbound network connections to the attacker's domain. Search your firewall, proxy, or DNS logs for:</p>
+          <div class="cmd">models.litellm.cloud</div>
+          <p>On Linux, check recent connections:</p>
+          <div class="cmd">grep "litellm.cloud" /var/log/syslog 2>/dev/null
+grep "litellm.cloud" /var/log/ufw.log 2>/dev/null</div>
+          <p>Going forward, consider blocking outbound POST requests to unknown domains from Python processes using a firewall rule or Little Snitch equivalent.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-header" onclick="toggle(this)">
+          <span class="step-num">07</span>
+          <span class="step-title">Harden your dependency practices going forward</span>
+          <span class="tag tag-verify">Harden</span>
+          <span class="chevron">›</span>
+        </div>
+        <div class="step-body">
+          <p>This attack highlights the risk of unpinned dependencies. Adopt these practices:</p>
+          <ul class="affected-list">
+            <li><span class="dot amber"></span>Pin all dependencies with exact versions in requirements.txt</li>
+            <li><span class="dot amber"></span>Use hash verification: <code style="font-family:var(--mono);font-size:12px;color:#aaa">pip install --require-hashes</code></li>
+            <li><span class="dot amber"></span>Audit your dependency graph regularly with tools like pip-audit</li>
+            <li><span class="dot amber"></span>Run <code style="font-family:var(--mono);font-size:12px;color:#aaa">pip-audit</code> on all environments as part of CI/CD</li>
+            <li><span class="dot amber"></span>Monitor high-centrality packages (ones with massive downstream reach) extra carefully</li>
+            <li><span class="dot amber"></span>Consider egress sandboxing for Python processes in production</li>
+            <li><span class="dot amber"></span>Never store secrets in plain .env files on shared machines</li>
+          </ul>
+          <div class="cmd"># Install pip-audit
+pip install pip-audit
+
+# Scan your environment
+pip-audit</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Affected scope</div>
+    <ul class="affected-list">
+      <li><span class="dot"></span>Local development machines with litellm 1.82.7 or 1.82.8 installed</li>
+      <li><span class="dot"></span>CI/CD pipelines that installed or upgraded litellm after 2026-03-24</li>
+      <li><span class="dot"></span>Docker containers built with those versions</li>
+      <li><span class="dot"></span>Production servers running affected versions</li>
+      <li><span class="dot"></span>Any environment that pulled in DSPy ≥ 1.x with litellm>=1.64.0 as a dependency</li>
+      <li><span class="dot"></span>MCP plugin environments using litellm as a transitive dependency</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>
+  LiteLLM supply chain attack — 2026-03-24 · Safe version: litellm==1.82.6 or earlier · Source: GitHub issue #24512 / Callum McMahon's writeup
+</footer>
+
+<script>
+  function toggle(header) {
+    const step = header.closest('.step');
+    step.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

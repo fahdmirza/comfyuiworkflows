@@ -1,0 +1,64 @@
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, StorageContext
+from llama_index.core import Settings
+from llama_index.llms.ollama import Ollama
+from llama_index.embeddings.ollama import OllamaEmbedding
+from turbovec.llama_index import TurboQuantVectorStore
+from turbovec import TurboQuantIndex
+
+# Setup Ollama LLM and embeddings - fully local, nothing leaves your machine
+Settings.llm = Ollama(model="gemma4:31b", request_timeout=120.0)
+Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text")
+
+# Load document
+print("Loading document...")
+documents = SimpleDirectoryReader(
+    input_files=["/home/Ubuntu/TransferData/myfiles/fahd.txt"]
+).load_data()
+
+# Create turbovec vector store with 4-bit TurboQuant compression
+print("Creating TurboQuant vector index...")
+tq_index = TurboQuantIndex(dim=768, bit_width=4)
+vector_store = TurboQuantVectorStore(index=tq_index)
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
+
+# Index the document
+index = VectorStoreIndex.from_documents(
+    documents,
+    storage_context=storage_context
+)
+
+# Compression statistics
+num_vectors = len(tq_index)
+dim = 768
+bit_width = 4
+bytes_per_float32 = 4
+
+original_bytes = num_vectors * dim * bytes_per_float32
+compressed_bytes = num_vectors * dim * bit_width // 8
+compression_ratio = original_bytes / compressed_bytes if compressed_bytes > 0 else 0
+
+print("\n--- TurboQuant Compression Statistics ---")
+print(f"Vectors indexed      : {num_vectors}")
+print(f"Dimensions           : {dim}")
+print(f"Bit width            : {bit_width}-bit")
+print(f"Original size        : {original_bytes:,} bytes ({original_bytes/1024:.1f} KB) at float32")
+print(f"Compressed size      : {compressed_bytes:,} bytes ({compressed_bytes/1024:.1f} KB) at {bit_width}-bit")
+print(f"Compression ratio    : {compression_ratio:.1f}x smaller")
+print("-----------------------------------------\n")
+
+# Create query engine
+query_engine = index.as_query_engine()
+
+# Ask questions
+questions = [
+    "What GPU infrastructure does Fahd use?",
+    "What company does Fahd run?",
+    "What is Fahd's YouTube channel focus?",
+    "Which cloud platform is Fahd an MVP of?"
+]
+
+print("--- Local RAG Pipeline: TurboQuant + Gemma4 + Ollama ---\n")
+for q in questions:
+    print(f"Q: {q}")
+    response = query_engine.query(q)
+    print(f"A: {response}\n")

@@ -1,0 +1,1593 @@
+{
+  "id": "z322155763-rfg6-5f64-6360-89dg70469329",
+  "revision": 0,
+  "last_node_id": 151,
+  "last_link_id": 213,
+  "nodes": [
+    {
+      "id": 106,
+      "type": "EmptyHiDreamO1LatentImage",
+      "pos": [
+        -1928.1103075316967,
+        5109.033246142639
+      ],
+      "size": [
+        297.56796875,
+        130
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            140
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyHiDreamO1LatentImage"
+      },
+      "widgets_values": [
+        2048,
+        2048,
+        1
+      ]
+    },
+    {
+      "id": 108,
+      "type": "SamplerCustom",
+      "pos": [
+        -1538.8562638363328,
+        4882.773718337663
+      ],
+      "size": [
+        271.125,
+        495.125
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 213
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 137
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 138
+        },
+        {
+          "name": "sampler",
+          "type": "SAMPLER",
+          "link": 185
+        },
+        {
+          "name": "sigmas",
+          "type": "SIGMAS",
+          "link": 139
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 140
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "LATENT",
+          "links": [
+            142
+          ]
+        },
+        {
+          "name": "denoised_output",
+          "type": "LATENT",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SamplerCustom"
+      },
+      "widgets_values": [
+        true,
+        43,
+        "fixed",
+        1
+      ]
+    },
+    {
+      "id": 112,
+      "type": "BasicScheduler",
+      "pos": [
+        -1918.4672384729765,
+        5307.480518417813
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 182
+        }
+      ],
+      "outputs": [
+        {
+          "name": "SIGMAS",
+          "type": "SIGMAS",
+          "links": [
+            139
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BasicScheduler"
+      },
+      "widgets_values": [
+        "normal",
+        28,
+        1
+      ]
+    },
+    {
+      "id": 128,
+      "type": "LoadImage",
+      "pos": [
+        -3249.8736671644183,
+        5289.616521680146
+      ],
+      "size": [
+        282.798828125,
+        314
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            189
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "wolf_frame_34.png",
+        "image"
+      ]
+    },
+    {
+      "id": 18,
+      "type": "LoadImage",
+      "pos": [
+        -3279.1065000530334,
+        4896.132183979657
+      ],
+      "size": [
+        282.798828125,
+        314
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            159
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "oldman_upscaled.png",
+        "image"
+      ]
+    },
+    {
+      "id": 131,
+      "type": "Note",
+      "pos": [
+        -3136.9790071446105,
+        4507.370329715964
+      ],
+      "size": [
+        210,
+        102.82596768939038
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "CLIP and VAE aren't real models, just placeholders to allow using with existing nodes"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 6,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        -3406.3776008020673,
+        4661.7387523495945
+      ],
+      "size": [
+        469.1760492356725,
+        98
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            192
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            146,
+            150
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            147
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "hidream_o1_image_dev_bf16.safetensors"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 124,
+      "type": "ModelNoiseScale",
+      "pos": [
+        -2279.385479793361,
+        4796.674719883528
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 192
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            182,
+            213
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ModelNoiseScale"
+      },
+      "widgets_values": [
+        7.5
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 104,
+      "type": "HiDreamO1ReferenceImages",
+      "pos": [
+        -1910.8181507037211,
+        4905.0525014270825
+      ],
+      "size": [
+        243.52890625,
+        106
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 141
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 151
+        },
+        {
+          "label": "image_1",
+          "name": "images.image_1",
+          "type": "IMAGE",
+          "link": 159
+        },
+        {
+          "label": "image_2",
+          "name": "images.image_2",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 189
+        },
+        {
+          "label": "image_3",
+          "name": "images.image_3",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            137
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            138
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HiDreamO1ReferenceImages"
+      },
+      "widgets_values": [],
+      "color": "#332922",
+      "bgcolor": "#593930"
+    },
+    {
+      "id": 110,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -2830.147138832165,
+        4570.8424550712125
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 146
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            141
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "image of an old man riding a wolf on a beach"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 111,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -2828.1706385573107,
+        4827.217672254912
+      ],
+      "size": [
+        405.7683974442598,
+        118.28100686673133
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 150
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            151
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        ""
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 129,
+      "type": "MarkdownNote",
+      "pos": [
+        -4148.137443444142,
+        4957.921736722634
+      ],
+      "size": [
+        337.8847117558721,
+        111.04510993732947
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "Models:\n\n[https://huggingface.co/Comfy-Org/HiDream-O1-Image](https://huggingface.co/Comfy-Org/HiDream-O1-Image)\n\n- mxfp8 is higher quality even on unsupported hardware, on 50xx it's ~30% faster\n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 133,
+      "type": "EmptyHiDreamO1LatentImage",
+      "pos": [
+        -1910.9813900322845,
+        6894.453698765497
+      ],
+      "size": [
+        297.56796875,
+        130
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            198
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyHiDreamO1LatentImage"
+      },
+      "widgets_values": [
+        2048,
+        2048,
+        1
+      ]
+    },
+    {
+      "id": 135,
+      "type": "VAEDecode",
+      "pos": [
+        -1172.7627282342362,
+        6590.564706384668
+      ],
+      "size": [
+        140,
+        46
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 199
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 200
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            210
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 137,
+      "type": "LoadImage",
+      "pos": [
+        -3232.744749665006,
+        7075.036974303005
+      ],
+      "size": [
+        282.798828125,
+        314
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            207
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "wolf_frame_34.png",
+        "image"
+      ]
+    },
+    {
+      "id": 138,
+      "type": "LoadImage",
+      "pos": [
+        -3261.9775825536212,
+        6681.552636602516
+      ],
+      "size": [
+        282.798828125,
+        314
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            206
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "oldman_upscaled.png",
+        "image"
+      ]
+    },
+    {
+      "id": 140,
+      "type": "Note",
+      "pos": [
+        -3119.8500896451983,
+        6292.790782338822
+      ],
+      "size": [
+        210,
+        102.82596768939038
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "CLIP and VAE aren't real models, just placeholders to allow using with existing nodes"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 143,
+      "type": "HiDreamO1ReferenceImages",
+      "pos": [
+        -1893.689233204309,
+        6690.472954049941
+      ],
+      "size": [
+        243.52890625,
+        106
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 204
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 205
+        },
+        {
+          "label": "image_1",
+          "name": "images.image_1",
+          "type": "IMAGE",
+          "link": 206
+        },
+        {
+          "label": "image_2",
+          "name": "images.image_2",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 207
+        },
+        {
+          "label": "image_3",
+          "name": "images.image_3",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            194
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            195
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HiDreamO1ReferenceImages"
+      },
+      "widgets_values": [],
+      "color": "#332922",
+      "bgcolor": "#593930"
+    },
+    {
+      "id": 144,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -2813.018221332753,
+        6356.262907694071
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 208
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            204
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "image of an old man riding a wolf on a beach"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 146,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -2811.0417210578985,
+        6612.638124877771
+      ],
+      "size": [
+        405.7683974442598,
+        118.28100686673133
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 209
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            205
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        ""
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 147,
+      "type": "Note",
+      "pos": [
+        -2808.265025536966,
+        6674.268321858916
+      ],
+      "size": [
+        243.83115399667804,
+        88
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "Negative prompt is meant to be empty"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 148,
+      "type": "PreviewImage",
+      "pos": [
+        -953.8161852261705,
+        6366.782454131942
+      ],
+      "size": [
+        1284.1858018529942,
+        1277.1173669542877
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 210
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 149,
+      "type": "Note",
+      "pos": [
+        -1589.9395428972239,
+        6256.620041257266
+      ],
+      "size": [
+        289.45447017284914,
+        103.33879371455441
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "Workaround for the base model's major patch tile issue, experimental"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 136,
+      "type": "BasicScheduler",
+      "pos": [
+        -1901.3383209735644,
+        7092.900971040672
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 201
+        }
+      ],
+      "outputs": [
+        {
+          "name": "SIGMAS",
+          "type": "SIGMAS",
+          "links": [
+            197
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BasicScheduler"
+      },
+      "widgets_values": [
+        "normal",
+        40,
+        1
+      ]
+    },
+    {
+      "id": 105,
+      "type": "VAEDecode",
+      "pos": [
+        -1189.8916457336484,
+        4805.1442537618095
+      ],
+      "size": [
+        140,
+        46
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 142
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 147
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            191
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 125,
+      "type": "SamplerLCM",
+      "pos": [
+        -2268.2698708340704,
+        5080.193179836683
+      ],
+      "size": [
+        270,
+        106.1636469245459
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "SAMPLER",
+          "type": "SAMPLER",
+          "links": [
+            185
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SamplerLCM"
+      },
+      "widgets_values": [
+        1,
+        1,
+        2.5
+      ]
+    },
+    {
+      "id": 142,
+      "type": "ModelNoiseScale",
+      "pos": [
+        -2262.2565622939487,
+        6582.095172506387
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 203
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            201,
+            202
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ModelNoiseScale"
+      },
+      "widgets_values": [
+        8
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 134,
+      "type": "SamplerCustom",
+      "pos": [
+        -1521.7273463369206,
+        6668.194170960522
+      ],
+      "size": [
+        271.125,
+        495.125
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 193
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 194
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 195
+        },
+        {
+          "name": "sampler",
+          "type": "SAMPLER",
+          "link": 212
+        },
+        {
+          "name": "sigmas",
+          "type": "SIGMAS",
+          "link": 197
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 198
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "LATENT",
+          "links": [
+            199
+          ]
+        },
+        {
+          "name": "denoised_output",
+          "type": "LATENT",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SamplerCustom"
+      },
+      "widgets_values": [
+        true,
+        43,
+        "fixed",
+        5
+      ]
+    },
+    {
+      "id": 141,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        -3389.248683302655,
+        6447.159204972453
+      ],
+      "size": [
+        469.1760492356725,
+        98
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            203
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            208,
+            209
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            200
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "hidream_o1_image_bf16.safetensors"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 123,
+      "type": "PreviewImage",
+      "pos": [
+        -970.9451027255827,
+        4581.362001509084
+      ],
+      "size": [
+        1284.1858018529942,
+        1277.1173669542877
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 2,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 191
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 151,
+      "type": "KSamplerSelect",
+      "pos": [
+        -2263.066423502761,
+        6847.9807711637595
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "SAMPLER",
+          "type": "SAMPLER",
+          "links": [
+            212
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSamplerSelect"
+      },
+      "widgets_values": [
+        "dpmpp_2m_sde_gpu"
+      ]
+    },
+    {
+      "id": 139,
+      "type": "HiDreamO1PatchSeamSmoothing",
+      "pos": [
+        -1583.607743107763,
+        6399.056488112669
+      ],
+      "size": [
+        337.98203125,
+        178
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 202
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            193
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HiDreamO1PatchSeamSmoothing"
+      },
+      "widgets_values": [
+        0.8,
+        1,
+        "single_shift",
+        "ramp_2_4",
+        "median",
+        1
+      ]
+    }
+  ],
+  "links": [
+    [
+      137,
+      104,
+      0,
+      108,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      138,
+      104,
+      1,
+      108,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      139,
+      112,
+      0,
+      108,
+      4,
+      "SIGMAS"
+    ],
+    [
+      140,
+      106,
+      0,
+      108,
+      5,
+      "LATENT"
+    ],
+    [
+      141,
+      110,
+      0,
+      104,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      142,
+      108,
+      0,
+      105,
+      0,
+      "LATENT"
+    ],
+    [
+      146,
+      6,
+      1,
+      110,
+      0,
+      "CLIP"
+    ],
+    [
+      147,
+      6,
+      2,
+      105,
+      1,
+      "VAE"
+    ],
+    [
+      150,
+      6,
+      1,
+      111,
+      0,
+      "CLIP"
+    ],
+    [
+      151,
+      111,
+      0,
+      104,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      159,
+      18,
+      0,
+      104,
+      2,
+      "IMAGE"
+    ],
+    [
+      182,
+      124,
+      0,
+      112,
+      0,
+      "MODEL"
+    ],
+    [
+      185,
+      125,
+      0,
+      108,
+      3,
+      "SAMPLER"
+    ],
+    [
+      189,
+      128,
+      0,
+      104,
+      3,
+      "IMAGE"
+    ],
+    [
+      191,
+      105,
+      0,
+      123,
+      0,
+      "IMAGE"
+    ],
+    [
+      192,
+      6,
+      0,
+      124,
+      0,
+      "MODEL"
+    ],
+    [
+      193,
+      139,
+      0,
+      134,
+      0,
+      "MODEL"
+    ],
+    [
+      194,
+      143,
+      0,
+      134,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      195,
+      143,
+      1,
+      134,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      197,
+      136,
+      0,
+      134,
+      4,
+      "SIGMAS"
+    ],
+    [
+      198,
+      133,
+      0,
+      134,
+      5,
+      "LATENT"
+    ],
+    [
+      199,
+      134,
+      0,
+      135,
+      0,
+      "LATENT"
+    ],
+    [
+      200,
+      141,
+      2,
+      135,
+      1,
+      "VAE"
+    ],
+    [
+      201,
+      142,
+      0,
+      136,
+      0,
+      "MODEL"
+    ],
+    [
+      202,
+      142,
+      0,
+      139,
+      0,
+      "MODEL"
+    ],
+    [
+      203,
+      141,
+      0,
+      142,
+      0,
+      "MODEL"
+    ],
+    [
+      204,
+      144,
+      0,
+      143,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      205,
+      146,
+      0,
+      143,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      206,
+      138,
+      0,
+      143,
+      2,
+      "IMAGE"
+    ],
+    [
+      207,
+      137,
+      0,
+      143,
+      3,
+      "IMAGE"
+    ],
+    [
+      208,
+      141,
+      1,
+      144,
+      0,
+      "CLIP"
+    ],
+    [
+      209,
+      141,
+      1,
+      146,
+      0,
+      "CLIP"
+    ],
+    [
+      210,
+      135,
+      0,
+      148,
+      0,
+      "IMAGE"
+    ],
+    [
+      212,
+      151,
+      0,
+      134,
+      3,
+      "SAMPLER"
+    ],
+    [
+      213,
+      124,
+      0,
+      108,
+      0,
+      "MODEL"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "Dev (the distilled model)",
+      "bounding": [
+        -3712.42819056113,
+        4270.9938201222485,
+        4058.717286108069,
+        1722.6518307884162
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "the base model",
+      "bounding": [
+        -3695.299273061718,
+        6056.414272745107,
+        4058.717286108069,
+        1722.6518307884162
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "frontendVersion": "1.43.18",
+    "VHS_latentpreview": true,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": false,
+    "VHS_KeepIntermediate": true,
+    "ds": {
+      "scale": 0.32349184307607315,
+      "offset": [
+        4112.724727848433,
+        -4162.676303163474
+      ]
+    }
+  },
+  "version": 0.4
+}

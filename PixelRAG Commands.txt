@@ -1,0 +1,40 @@
+
+# Environment
+conda create -n ai python=3.12 -y && conda activate ai
+
+# Install PixelRAG with all stages
+pip install 'pixelrag[embed,serve,index,pdf]'
+
+# Patch the article-id bug (sources use string IDs, pipeline expects int)
+FILE=$(python3 -c "import pixelrag_index.pipelines as m; print(m.__file__)")
+sed -i 's/max_idx = max(int(a\["id"\]) for a in articles) + 1 if articles else 0/max_idx = len(articles)/' $FILE
+sed -i 's/idx = int(a\["id"\])/idx = next(i for i, x in enumerate(articles) if x is a)/' $FILE
+
+# Turn a Wikipedia page into a PDF (our source document)
+mkdir -p my_docs
+pip install weasyprint
+python3 -c "import weasyprint; weasyprint.HTML(url='https://en.wikipedia.org/wiki/Terracotta_Army').write_pdf('my_docs/terracotta.pdf')"
+
+# Stage 1 — Render PDF to tiles at 100 DPI (keeps chunks under the 875px width limit)
+pixelshot my_docs/terracotta.pdf -o ./pdf_tiles --dpi 100
+
+# Move tiles into a numeric shard dir (embedder needs a numeric article-id dir name)
+mkdir -p my_index/tiles
+mv pdf_tiles/terracotta.png.tiles my_index/tiles/1.png.tiles
+
+# Stage 2 — Chunk tiles into strips
+python -m pixelrag_embed.chunk --shard-dir my_index/tiles --workers 8
+
+# Stage 3 — Embed chunks on the GPU via transformers (direct_gpu avoids vllm/sglang/flash-attn)
+pixelrag embed --shard-dir my_index/tiles --output-dir my_index/embeddings --gpu-ids 0 --backend direct_gpu
+
+# Stage 4 — Build the FAISS index
+pixelrag build-index build --embeddings-dir my_index/embeddings --output-dir my_index --nlist 1
+
+# Create the articles.json mapping (index = article_id; slot 1 = our PDF)
+cat > my_index/articles.json << 'EOF'
+[{"title": "", "url": ""}, {"title": "Terracotta Army", "url": "https://en.wikipedia.org/wiki/Terracotta_Army"}]
+EOF
+
+# Serve the index
+pixelrag serve --index-dir my_index --tiles-dir my_index/tiles --articles-json my_index/articles.json --port 30001
